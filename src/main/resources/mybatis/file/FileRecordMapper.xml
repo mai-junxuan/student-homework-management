@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.file.mapper.FileRecordMapper">
+
+    <resultMap type="FileRecord" id="FileRecordResult">
+        <id property="id" column="id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="uploadTime" column="upload_time"/>
+        <result property="classId" column="class_id"/>
+        <result property="studentId" column="student_id"/>
+    </resultMap>
+
+    <sql id="fileRecordVo">
+        select id, file_name, file_path, upload_time, class_id, student_id
+        from file_record
+    </sql>
+
+    <select id="selectFileRecordList" parameterType="FileRecord" resultMap="FileRecordResult">
+        <include refid="fileRecordVo"/>
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="fileName != null and fileName != ''">
+                AND file_name like concat('%',  #{fileName}, '%')
+            </if>
+            <if test="classId != null and classId != ''">
+                AND class_id = #{classId}
+            </if>
+            <if test="studentId != null and studentId != ''">
+                AND student_id = #{studentId}
+            </if>
+            <if test="params != null and params != ''">
+                <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                    and upload_time &gt;= #{params.beginTime}
+                </if>
+                <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                    and upload_time &lt;= #{params.beginTime}
+                </if>
+            </if>
+
+        </where>
+    </select>
+
+    <insert id="insertFileRecord" parameterType="FileRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into file_record(
+        <if test="fileName != null and fileName != ''">file_name,</if>
+        <if test="filePath != null and filePath != ''">file_path,</if>
+        <if test="uploadTime != null and uploadTime != ''">upload_time,</if>
+        <if test="classId != null and classId != ''">class_id,</if>
+        <if test="studentId != null and studentId != ''">student_id</if>
+        )values(
+        <if test="fileName != null and fileName != ''">#{fileName},</if>
+        <if test="filePath != null and filePath != ''">#{filePath},</if>
+        <if test="uploadTime != null and uploadTime != ''">#{uploadTime},</if>
+        <if test="classId != null and classId != ''">#{classId},</if>
+        <if test="studentId != null and studentId != ''">#{studentId}</if>
+        )
+    </insert>
+
+</mapper> 
